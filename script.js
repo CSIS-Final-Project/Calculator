@@ -198,3 +198,13 @@ function reset()
 	calcFunctions.secondNumberFlag = false;
 	calcFunctions.mathButtons = null;
 }
+
+//displays text stating the project name at the bottom
+document.write("HTML/CSS/Javascript Calculator");
+
+//creates an event listener for the credits button
+document.getElementById("credit").addEventListener("click", credits);
+
+function credits() {
+	window.alert("This project was created by Arron Pelc, David Eubank, and Joseph Summerlin");
+}
