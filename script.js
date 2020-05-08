@@ -1,4 +1,3 @@
-
 //object that hold information from the pressed calculator keys
 var calcFunctions =
 {
@@ -8,27 +7,31 @@ var calcFunctions =
 	mathButtons: null //holds value for buttons with 'function' class tag
 };
 
+
 // displays values on calculator screen
 function calcScreen()
 {
-	var length = 9;
+	var length = 10;
 	var onScreen = calcFunctions.onScreen;
 	var fitsOnScreen = onScreen.substring(0, length);
 
 	var display = document.querySelector('#calc_screen');
 	display.value = fitsOnScreen;
-	
-
-	console.log(calcFunctions);
 }
 
 calcScreen();
+
 
 //Event listener for calculator buttons clicked
 var pressed = document.querySelector('#calc_keys');
 pressed.addEventListener('click', (event) =>
 {
 	var clickedButton = event.target;
+
+	if (!clickedButton.matches('button'))
+	{
+		return;
+	}
 
 	//logs if operator key (+,-,*,/) is pressed
 	if (clickedButton.classList.contains('function'))
@@ -58,6 +61,7 @@ pressed.addEventListener('click', (event) =>
 	calcScreen();
 });
 
+
 /*
 	Shows numbers on calculator display.  If the display is showing '0', it will be 
 	overwritten with the button clicked.  If the display is showing anythign other
@@ -70,6 +74,7 @@ function displayNumbers(clickedButton)
 	if (calcFunctions.secondNumberFlag == true)
 	{
 		calcFunctions.onScreen = clickedButton;
+		calcFunctions.secondNumberFlag = false;
 	}
 	else if (calcFunctions.onScreen == '0')
 	{
@@ -89,28 +94,31 @@ function displayNumbers(clickedButton)
 */
 function mathButtonsPressed(mathButton)
 {
-	var value = calcFunctions.onScreen;
+	var firstNumber = calcFunctions.firstNumber;
+	var SecNumFlag = calcFunctions.secondNumberFlag;
+	var value = parseFloat(calcFunctions.onScreen);
 
-
-	if (calcFunctions.firstNumber == null)
+	if (firstNumber == null)
 	{
 		calcFunctions.firstNumber = value;
 	}
-	else if (calcFunctions.secondNumberFlag == true)
+
+	else if (firstNumber != null && SecNumFlag == true)
 	{
-		calcFunctions.secondNumberFlag = false
-		var result = doMath()
-		calcFunctions.onScreen = String(result);
-		return;
+		calcFunctions.secondNumberFlag = false;
 	}
 
+	else if (firstNumber != null)
+	{
+		var result = doMath()
+		calcFunctions.onScreen = String(result);
+		calcFunctions.firstNumber = result;
+		calcFunctions.secondNumberFlag = false;
+	}
 
 	calcFunctions.secondNumberFlag = true;
 	calcFunctions.mathButtons = mathButton;
 }
-
-
-
 
 
 /*
@@ -126,7 +134,6 @@ function doMath()
 	var secondNumber = parseFloat(calcFunctions.onScreen);
 	var firstNumber = parseFloat(calcFunctions.firstNumber);
 	
-
 	switch (calcFunctions.mathButtons)
 	{
 		case '*':
@@ -138,16 +145,30 @@ function doMath()
 			break;
 				
 		case '/':
-			result = (firstNumber/secondNumber);
+			try
+			{
+				result = (firstNumber/secondNumber);
+				if (Number.isNaN(result))
+				{
+					throw new Error("  You can't divide 0 by 0.");
+				}
+				else if (result == Infinity)
+				{
+					throw new Error("  You can't divide a number by 0");
+				}
+			}
+			catch (Error)
+			{
+				alert(Error);
+				result = "ERROR"
+			}
 			break;
 
 		case '+':
 			result = (firstNumber + secondNumber);
 			break;
-
 	}
 	
-	calcFunctions.firstNumber = result;
 	return result;
 	
 }
