@@ -79,3 +79,10 @@ button
 	background-color: lightcoral;
 	font-weight: bold;
 }
+
+#credit
+{
+	font-family: 'serif', Georgia;
+	background-color: #FFF8DC;
+	width: 100px;
+}
